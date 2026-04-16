@@ -24,11 +24,7 @@ debug = app.config.get("DEBUG", False)
 def url_friendly(string):
     return unidecode(string).lower().replace(' ', '-').replace('/', '-')
 
-if 'mysql' in app.config['DB']:
-    engine = create_engine(app.config['DB'], encoding="utf8", pool_size = 100, pool_recycle=4200, echo=debug) # XXX
-    # pool_recycle is to prevent "server has gone away"
-else:
-    engine = create_engine(app.config['DB'], encoding="utf8", echo=debug)
+engine = create_engine(app.config['DB'], echo=debug)
 
 session = scoped_session(sessionmaker(bind=engine, autoflush=False))
 

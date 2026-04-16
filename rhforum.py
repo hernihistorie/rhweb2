@@ -19,10 +19,8 @@ import subprocess
 from lxml.html.clean import Cleaner
 from lxml.etree import ParserError
 
-from werkzeug import secure_filename
 from flask import Flask, Blueprint, render_template, request, flash, redirect, session, abort, url_for, make_response, g
-from wtforms import Form, BooleanField, TextField, TextAreaField, PasswordField, RadioField, SelectField, SelectMultipleField, BooleanField, IntegerField, HiddenField, SubmitField, validators, ValidationError, widgets
-from wtforms.fields.html5 import DateTimeLocalField
+from wtforms import Form, BooleanField, StringField as TextField, TextAreaField, PasswordField, RadioField, SelectField, SelectMultipleField, BooleanField, IntegerField, HiddenField, SubmitField, DateTimeLocalField, validators, ValidationError, widgets
 
 import requests
 
@@ -66,28 +64,28 @@ if app.config.get("DOKU_URL", ""):
 
 
 class PostForm(Form):
-    text = TextAreaField('Text', [validators.required()])
+    text = TextAreaField('Text', [validators.InputRequired()])
     submit = SubmitField('Odeslat')
     
 class EditPostForm(Form):
-    text = TextAreaField('Text', [validators.required()])
+    text = TextAreaField('Text', [validators.InputRequired()])
     submit = SubmitField('Upravit')
     delete = SubmitField('Smazat')
     
 class EditThreadForm(Form):
-    name = TextField('Nadpis', [validators.required()])
-    text = TextAreaField('Text', [validators.required()])
+    name = TextField('Nadpis', [validators.InputRequired()])
+    text = TextAreaField('Text', [validators.InputRequired()])
     forum_id = SelectField('Fórum', coerce=int)
     wiki_article = TextField('Wiki článek')
     submit = SubmitField('Upravit')
     delete = SubmitField('Smazat')
 
 class ThreadForm(PostForm):
-    name = TextField('Nadpis', [validators.required()])
+    name = TextField('Nadpis', [validators.InputRequired()])
 
 class UserForm(Form):
-    fullname = TextField('Nadpis', [validators.required()])
-    email = TextField('Email', [validators.required()])
+    fullname = TextField('Nadpis', [validators.InputRequired()])
+    email = TextField('Email', [validators.InputRequired()])
     new_password = PasswordField('Nové heslo')
     homepage = TextField('Homepage')
     avatar_url = TextField('URL avataru')
@@ -201,8 +199,8 @@ def sort_tasks(tasks):
     tasks.sort(cmp_tasks)
 
 class ForumForm(Form):
-    name = TextField('Jméno', [validators.required()])
-    description = TextField('Popisek', [validators.required()])
+    name = TextField('Jméno', [validators.InputRequired()])
+    description = TextField('Popisek', [validators.InputRequired()])
     category_id = SelectField('Kategorie', coerce=int)
     move_up = SubmitField('↑')
     move_down = SubmitField('↓')
@@ -211,7 +209,7 @@ class ForumForm(Form):
     delete = SubmitField('Odstranit')
 
 class CategoryForm(Form):
-    name = TextField('Jméno', [validators.required()])
+    name = TextField('Jméno', [validators.InputRequired()])
     group_id = SelectField('Nutná skupina', coerce=int)
     move_up = SubmitField('↑')
     move_down = SubmitField('↓')
@@ -224,7 +222,7 @@ class ForumControlsForm(Form):
 class TaskForm(Form):
     type = SelectField("Typ", [validators.optional()], choices=(('task', 'úkol'), ('announcement', 'oznámení')))
     due_time = DateTimeLocalField('Čas', [validators.optional()], format="%Y-%m-%dT%H:%M")
-    text = TextField('Text', [validators.required()])
+    text = TextField('Text', [validators.InputRequired()])
     user_id = SelectField('Uživatel', coerce=int)
     submit = SubmitField("Zadat")
     
@@ -400,8 +398,8 @@ def edit_forum_or_category(forum_id=None, category_id=None):
     return render_template("forum/index.html", categories=categories+[None], uncategorized_fora=uncategorized_fora, editable=editable, form=form, new=not bool(forum_id), trash=trash)
 
 class LoginForm(Form):
-    name = TextField('Jméno', [validators.required()])
-    password = PasswordField('Heslo', [validators.required()])
+    name = TextField('Jméno', [validators.InputRequired()])
+    password = PasswordField('Heslo', [validators.InputRequired()])
     submit = SubmitField('Přihlásit se')
 
 @rhforum.route("/login", methods="GET POST".split())
@@ -431,14 +429,14 @@ def login():
 
 class RegisterForm(Form):
     username = TextField('Nevyplňovat')
-    bbq = TextField('Login', [validators.required()])
-    fullname = TextField('Jméno', [validators.required()])
+    bbq = TextField('Login', [validators.InputRequired()])
+    fullname = TextField('Jméno', [validators.InputRequired()])
     password = PasswordField('Heslo', [
-        validators.Required(),
+        validators.InputRequired(),
         validators.EqualTo('confirm_password', message='Hesla se musí schodovat')
     ])
     confirm_password = PasswordField('Heslo znovu')
-    email = TextField('Email', [validators.required()])
+    email = TextField('Email', [validators.InputRequired()])
     submit = SubmitField('Zaregistrovat se')
 
 @rhforum.route("/register", methods="GET POST".split())
@@ -734,7 +732,7 @@ def edit_user(user_id, name=None):
     return render_template("forum/user.html", user=user, edit=True, form=form)
 
 class GroupForm(Form):
-    name = TextField('Jméno', [validators.required()])
+    name = TextField('Jméno', [validators.InputRequired()])
     symbol = TextField('Symbol')
     title = TextField('Titul')
     rank = IntegerField('Rank')
@@ -825,7 +823,7 @@ def change_task_status(task_id):
 
 
 class IRCSendForm(Form):
-    text = TextField('Text', [validators.required()])
+    text = TextField('Text', [validators.InputRequired()])
     submit = SubmitField('Odeslat')
 
 @rhforum.route("/irc-send/", methods=["GET", "POST"])
