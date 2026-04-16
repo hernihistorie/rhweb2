@@ -2,6 +2,7 @@
 DOKUPASS
 cache/
 env/
+.venv
 config.py
 test.db
 *.log
