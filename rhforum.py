@@ -10,7 +10,7 @@ import re
 
 import db
 from sqlalchemy import or_, and_, not_, asc, desc, func
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from functools import wraps # We need this to make Flask understand decorated routes.
 import hashlib
 
@@ -133,7 +133,7 @@ def before_request():
         g.user.laststamp = now()
     else:
         g.user = db.Guest()
-    g.now = now()
+    g.now = now().now(timezone.utc)
     g.yesterday = g.now - timedelta(days=1)
     g.tomorrow = g.now + timedelta(days=1)
     g.production = app.config['PRODUCTION']
