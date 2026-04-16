@@ -133,7 +133,7 @@ def before_request():
         g.user.laststamp = now()
     else:
         g.user = db.Guest()
-    g.now = now().now(timezone.utc)
+    g.now = now()
     g.yesterday = g.now - timedelta(days=1)
     g.tomorrow = g.now + timedelta(days=1)
     g.production = app.config['PRODUCTION']
