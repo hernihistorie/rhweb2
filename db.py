@@ -244,7 +244,7 @@ class Thread(Base):
     locked = Column(Boolean, default=False, nullable=False)
     archived = Column(Boolean, default=False, nullable=False)
     
-    posts = relationship("Post", order_by="Post.timestamp", lazy="dynamic")#, viewonly=True, primaryjoin="foreign(Post.deleted)==False")
+    posts = relationship("Post", order_by="Post.timestamp", lazy="dynamic", back_populates="thread")#, viewonly=True, primaryjoin="foreign(Post.deleted)==False")
     
     @property
     def last_post(self):
@@ -271,7 +271,7 @@ class Post(Base):
     id = Column(Integer, primary_key=True, nullable=False)
     name = Column(String(255))
     thread_id = Column(Integer, ForeignKey('threads.id'), nullable=False)
-    thread = relationship("Thread", order_by="Post.timestamp")
+    thread = relationship("Thread", order_by="Post.timestamp", back_populates="posts")
     author_id = Column(Integer, ForeignKey('users.uid'), nullable=False)
     author = relationship("User", foreign_keys=[author_id], backref='posts')
     timestamp = Column(DateTime)
