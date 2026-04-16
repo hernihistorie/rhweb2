@@ -72,7 +72,7 @@ class User(Base):
     
     @property
     def representative_group(self):
-        return max(self.groups, key=lambda group: group.rank if group.display else -1)
+        return max(self.groups, key=lambda group: group.rank if group.display else -1) if self.groups else None
     
     @property
     def title(self):
