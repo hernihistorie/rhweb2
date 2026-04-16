@@ -12,6 +12,7 @@
     {{ txt(num, 'příspěvek příspěvky příspěvků'.split()) }}
 {% endmacro %}
 {% macro ago(d) %}
+    {% if d.tzinfo %}{% set d = d.replace(tzinfo=None) %}{% endif %}
     <span title="{{d|datetime}}">
         {% with diff = g.now - d %}
             {% if diff.days < 0 %}
