@@ -10,6 +10,9 @@ import rhforum
 
 app = Flask('rhweb2')
 app_dir = os.path.dirname(os.path.abspath(__file__))
+cache_dir = app_dir+"/cache"
+if not os.path.exists(cache_dir):
+    os.makedirs(cache_dir)
 app.config.from_pyfile(app_dir+"/config.py") # XXX
 
 DOKUUSER = "rhweb"
@@ -26,7 +29,7 @@ def wikipage(name, force=False):
     
     if not force and not g.purge:
         try:
-            page = open(app_dir+"/cache/"+name+".html").read()
+            page = open(cache_dir+"/"+name+".html").read()
             g.caching_comment += "{} read from cache\n".format(name)
             return page
         except Exception as ex:
@@ -45,14 +48,14 @@ def wikipage(name, force=False):
     
     if not page and force:
         try:
-            return open(app_dir+"/cache/"+page+".html").read().decode('utf-8')
+            return open(cache_dir+"/"+page+".html").read().decode('utf-8')
         except Exception as ex:
             g.caching_comment += "cache open fail w force: {}\n".format(ex)
     
     if not page:
         return None
     
-    open(app_dir+"/cache/"+name+".html", "w").write(page)
+    open(cache_dir+"/"+name+".html", "w").write(page)
     
     return page
 
